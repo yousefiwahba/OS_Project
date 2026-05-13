@@ -1,53 +1,52 @@
 import socket
 import threading
 
-# 1. Connect to the Server
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('127.0.0.1', 5050))
 
+class NetworkClient:
+    def __init__(self, host='127.0.0.1', port=9999, on_receive_callback=None):
+        self.host = host
+        self.port = port
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def receive_messages():
-    """
-    This function runs continuously on a BACKGROUND thread.
-    Its only job is to wait for the server to send data and print it.
-    """
-    while True:
+        # This is a function passed from the UI to trigger when a message arrives
+        self.on_receive_callback = on_receive_callback
+
+    def connect(self):
+        """Attempts to connect to the server and starts the listening thread."""
         try:
-            # This is a BLOCKING call, but because it's on a background thread,
-            # it doesn't freeze the rest of the program!
-            message = client.recv(1024).decode('utf-8')
-            if message:
-                print(message)
-            else:
-                print("Disconnected from server.")
-                client.close()
+            self.client_socket.connect((self.host, self.port))
+            # Start background thread for listening
+            listener = threading.Thread(target=self._receive_messages, daemon=True)
+            listener.start()
+            return True
+        except ConnectionRefusedError:
+            return False
+
+    def _receive_messages(self):
+        """Constantly listens for data from the server."""
+        while True:
+            try:
+                data = self.client_socket.recv(1024)
+                if not data:
+                    break
+
+                # If we get a message, send it to the UI using the callback function
+                if self.on_receive_callback:
+                    self.on_receive_callback(data.decode("utf-8"))
+            except OSError:
                 break
-        except:
-            print("An error occurred or connection was closed.")
-            client.close()
-            break
 
+    def send_message(self, text):
+        """Pushes data to the server."""
+        try:
+            self.client_socket.send(text.encode("utf-8"))
+        except OSError:
+            pass
 
-def write_messages():
-    """
-    This function runs on the MAIN thread.
-    Its only job is to wait for you to type something and send it.
-    """
-    while True:
-        # Wait for user input
-        message = input("")
-
-        if message.lower() == 'quit':
-            client.close()
-            break
-
-        # Send the message to the server
-        client.send(message.encode('utf-8'))
-
-
-# 2. Start the listening thread
-receive_thread = threading.Thread(target=receive_messages)
-receive_thread.start()
-
-# 3. Start the writing loop (runs on the main thread)
-write_messages()
+    def disconnect(self):
+        """Safely closes the OS socket."""
+        try:
+            self.client_socket.shutdown(socket.SHUT_RDWR)
+            self.client_socket.close()
+        except OSError:
+            pass
