@@ -7,15 +7,14 @@ class NetworkClient:
         self.host = host
         self.port = port
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        # This is a function passed from the UI to trigger when a message arrives
         self.on_receive_callback = on_receive_callback
+        self.username = "Unknown"
 
-    def connect(self):
-        """Attempts to connect to the server and starts the listening thread."""
+    def connect(self, username):
+        """Saves the username, connects to the server, and starts listening."""
+        self.username = username
         try:
             self.client_socket.connect((self.host, self.port))
-            # Start background thread for listening
             listener = threading.Thread(target=self._receive_messages, daemon=True)
             listener.start()
             return True
@@ -23,28 +22,33 @@ class NetworkClient:
             return False
 
     def _receive_messages(self):
-        """Constantly listens for data from the server."""
         while True:
             try:
-                data = self.client_socket.recv(1024)
+                data = self.client_socket.recv(1024).decode("utf-8")
                 if not data:
                     break
 
-                # If we get a message, send it to the UI using the callback function
-                if self.on_receive_callback:
-                    self.on_receive_callback(data.decode("utf-8"))
+                # PROTOCOL PARSING: Split the string at the FIRST '|' symbol
+                if "|" in data:
+                    sender_name, actual_message = data.split("|", 1)
+                    if self.on_receive_callback:
+                        self.on_receive_callback(sender_name, actual_message)
+                else:
+                    # Fallback if a message doesn't have a | symbol
+                    if self.on_receive_callback:
+                        self.on_receive_callback("System", data)
             except OSError:
                 break
 
     def send_message(self, text):
-        """Pushes data to the server."""
         try:
-            self.client_socket.send(text.encode("utf-8"))
+            # PROTOCOL FORMATTING: Glue the username and message together
+            formatted_message = f"{self.username}|{text}"
+            self.client_socket.send(formatted_message.encode("utf-8"))
         except OSError:
             pass
 
     def disconnect(self):
-        """Safely closes the OS socket."""
         try:
             self.client_socket.shutdown(socket.SHUT_RDWR)
             self.client_socket.close()
