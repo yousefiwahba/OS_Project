@@ -1,4 +1,4 @@
-# 💬 PyChat — Socket-Based Messaging App
+#  Socket-Based Messaging App
 
 > A real-time, multi-client chat application built with Python, demonstrating core Operating Systems concepts including **TCP sockets**, **POSIX system calls**, **multi-threading**, and **inter-process communication**.
 
