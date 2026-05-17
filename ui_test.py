@@ -100,10 +100,12 @@ def _insert_bubble(kind, text, sender_name):
 #  WINDOW & LAYOUT SETUP
 # ─────────────────────────────────────────────
 root = tk.Tk()
-root.title("OS Project Chat")
+root.title("This is not WhatsApp")
 root.geometry("460x640")
 root.minsize(360, 480)
 root.configure(bg=BG_DARK)
+icon = tk.PhotoImage(file="paper-plane.png")
+root.iconphoto(True, icon)
 
 # Global Fonts
 font_body = tkfont.Font(family="Segoe UI", size=11)
@@ -119,8 +121,8 @@ font_btn = tkfont.Font(family="Segoe UI", size=10, weight="bold")
 login_frame = tk.Frame(root, bg=BG_DARK)
 login_frame.pack(fill=tk.BOTH, expand=True)
 
-tk.Label(login_frame, text="Welcome to Network Chat", font=font_title, bg=BG_DARK, fg=TEXT_PRIMARY).pack(pady=(150, 20))
-tk.Label(login_frame, text="Enter a display name:", font=font_body, bg=BG_DARK, fg=TEXT_SECONDARY).pack(pady=(0, 10))
+tk.Label(login_frame, text="Welcome to chatting App", font=font_title, bg=BG_DARK, fg=TEXT_PRIMARY).pack(pady=(150, 20))
+tk.Label(login_frame, text="Enter your name:", font=font_body, bg=BG_DARK, fg=TEXT_SECONDARY).pack(pady=(0, 10))
 
 username_entry = tk.Entry(login_frame, font=font_input, bg=BG_BUBBLE_FRI, fg=TEXT_PRIMARY,
                           insertbackground=TEXT_PRIMARY, relief=tk.FLAT, justify=tk.CENTER)
@@ -148,7 +150,7 @@ avatar_canvas.create_oval(29, 29, 37, 37, fill="#3ddc84", outline="")
 
 header_text_frame = tk.Frame(header, bg=BG_PANEL)
 header_text_frame.place(x=66, y=10)
-tk.Label(header_text_frame, text="Global Chat Room", font=font_title, bg=BG_PANEL, fg=TEXT_PRIMARY).pack(anchor="w")
+tk.Label(header_text_frame, text="Chat Room", font=font_title, bg=BG_PANEL, fg=TEXT_PRIMARY).pack(anchor="w")
 tk.Label(header_text_frame, text="● Online", font=font_subtitle, bg=BG_PANEL, fg="#3ddc84").pack(anchor="w")
 
 # 2. INPUT BAR
@@ -185,7 +187,7 @@ chat_area.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 scrollbar.config(command=chat_area.yview)
 
 # ─────────────────────────────────────────────────────────────
-#  TAG CONFIGURATIONS (THE FIX)
+#  TAG CONFIGURATIONS
 # ─────────────────────────────────────────────────────────────
 
 # 1. Alignment & Margins (Creates the Left/Right columns)
