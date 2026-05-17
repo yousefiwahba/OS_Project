@@ -352,7 +352,11 @@ sender_name, actual_message = data.split("|", 1)
 The `split("|", 1)` uses `maxsplit=1` so that a `|` character inside the message body is preserved correctly.
 
 ---
+## ScreenShots
+<img width="1095" height="837" alt="screenshot1" src="https://github.com/user-attachments/assets/96d5a973-8395-483e-a04c-0616fcf0a444" />
+<img width="580" height="843" alt="screenshot2" src="https://github.com/user-attachments/assets/cebc392b-60e5-43b7-8d49-a11841eca021" />
 
+---
 ## Troubleshooting
 
 | Problem | Likely Cause | Fix |
