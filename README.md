@@ -26,7 +26,7 @@
 
 ## Overview
 
-PyChat is a client-server messaging application developed as an Operating Systems course project. It demonstrates how two (or more) users can exchange real-time messages over a **TCP network** using **POSIX-compliant socket system calls**.
+This app is a client-server messaging application developed as an Operating Systems course project. It demonstrates how two (or more) users can exchange real-time messages over a **TCP network** using **POSIX-compliant socket system calls**.
 
 The application is split into three components:
 
